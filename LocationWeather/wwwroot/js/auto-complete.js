@@ -15,12 +15,10 @@ var placeSearch, autocomplete;
 
     function fillInAddress() {
         var place = autocomplete.getPlace().geometry;
-
-        $("#locationTxt").text(autocomplete.getPlace());
-
         if (place === undefined) {
             $().exceedAlert();
         } else {
+            $("#locationTxt").text(autocomplete.getPlace().name);
             var lat = place.location.lat();
             var lon = place.location.lng();
 
