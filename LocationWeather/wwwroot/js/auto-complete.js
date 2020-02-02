@@ -1,44 +1,41 @@
 ﻿
-var placeSearch, autocomplete;
+var autocomplete;
 
-    
+function initAutocomplete() {
 
+    autocomplete = new google.maps.places.Autocomplete(
+        (document.getElementById('location')),
+        { types: ['geocode'] });
 
-    function initAutocomplete() {
+    autocomplete.addListener('place_changed', fillInAddress);
+}
 
-        autocomplete = new google.maps.places.Autocomplete(
-            (document.getElementById('location')),
-            { types: ['geocode'] });
+function fillInAddress() {
+    var place = autocomplete.getPlace().geometry;
+    if (place === undefined) {
+        $().exceedAlert();
+    } else {
+        $("#locationTxt").text(autocomplete.getPlace().name);
+        var lat = place.location.lat();
+        var lon = place.location.lng();
 
-        autocomplete.addListener('place_changed', fillInAddress);
+        $().getWeather(parseInt(lat), parseInt(lon));
     }
-
-    function fillInAddress() {
-        var place = autocomplete.getPlace().geometry;
-        if (place === undefined) {
-            $().exceedAlert();
-        } else {
-            $("#locationTxt").text(autocomplete.getPlace().name);
-            var lat = place.location.lat();
-            var lon = place.location.lng();
-
-            $().getWeather(parseInt(lat), parseInt(lon));
-        }
         
 }
 
-    function geolocate() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function (position) {
-                var geolocation = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-                var circle = new google.maps.Circle({
-                    center: geolocation,
-                    radius: position.coords.accuracy
-                });
-                autocomplete.setBounds(circle.getBounds());
+function geolocate() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            var geolocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            var circle = new google.maps.Circle({
+                center: geolocation,
+                radius: position.coords.accuracy
             });
-        }
+            autocomplete.setBounds(circle.getBounds());
+        });
     }
+}

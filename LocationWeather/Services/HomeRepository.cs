@@ -1,5 +1,6 @@
 ﻿using LocationWeather.Interfaces;
 using LocationWeather.Models;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,12 @@ namespace LocationWeather.Services
 {
     public class HomeRepository : IHomeRepository
     {
+        private readonly IConfiguration _config;
+        public HomeRepository(IConfiguration config)
+        {
+            _config = config;
+        }
+
         public async Task<IpApiResponse> GetLocation(string ipAddress)
         {
             using (var client = new HttpClient())
@@ -35,7 +42,8 @@ namespace LocationWeather.Services
         {
             using (var client = new HttpClient())
             {
-                var appId = "ea06c25f3a4d5626b07a2414d99f9932";
+
+                var appId = _config.GetSection("OpenWeather").Get<List<string>>()[0];
 
                 var uri = $"http://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&APPID={appId}";
 
